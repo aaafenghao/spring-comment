@@ -8,4 +8,5 @@ public class IndexDao implements Dao {
 	public String query() {
 		return "query";
 	}
+
 }

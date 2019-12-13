@@ -1,14 +1,17 @@
 package com.fh.aop;
 
+import org.aspectj.lang.ProceedingJoinPoint;
+import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Before;
 import org.aspectj.lang.annotation.Pointcut;
 import org.springframework.context.annotation.EnableAspectJAutoProxy;
 import org.springframework.stereotype.Component;
+import org.springframework.util.StopWatch;
 
 @Component
 @Aspect
-@EnableAspectJAutoProxy(proxyTargetClass = true)
+@EnableAspectJAutoProxy(proxyTargetClass = false)
 public class LogAspectJ {
 
 	/**
@@ -27,5 +30,22 @@ public class LogAspectJ {
 	@Before(value = "aopTarget()")
 	public void log(){
 		System.out.println("before");
+	}
+
+	@Pointcut("@annotation(org.springframework.scheduling.annotation.Async)")
+	public void aopAnnotion(){}
+
+	@Around(value = "aopAnnotion()")
+	public void timeLog(ProceedingJoinPoint point){
+		StopWatch watch = new StopWatch();
+		watch.start();
+		try {
+			point.proceed();
+		} catch (Throwable throwable) {
+			throwable.printStackTrace();
+		}finally {
+			watch.stop();
+			System.out.println(watch.getTotalTimeSeconds());
+		}
 	}
 }

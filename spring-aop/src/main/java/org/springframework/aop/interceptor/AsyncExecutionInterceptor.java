@@ -112,6 +112,7 @@ public class AsyncExecutionInterceptor extends AsyncExecutionAspectSupport imple
 
 		Callable<Object> task = () -> {
 			try {
+				System.out.println("start task");
 				Object result = invocation.proceed();
 				if (result instanceof Future) {
 					return ((Future<?>) result).get();

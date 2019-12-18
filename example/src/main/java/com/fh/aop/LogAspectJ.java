@@ -1,18 +1,34 @@
 package com.fh.aop;
 
+import com.fh.aop.dao.DefaultPersonImpl;
+import com.fh.aop.dao.Person;
 import org.aspectj.lang.ProceedingJoinPoint;
-import org.aspectj.lang.annotation.Around;
-import org.aspectj.lang.annotation.Aspect;
-import org.aspectj.lang.annotation.Before;
-import org.aspectj.lang.annotation.Pointcut;
+import org.aspectj.lang.annotation.*;
 import org.springframework.context.annotation.EnableAspectJAutoProxy;
+import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StopWatch;
 
 @Component
-@Aspect
-@EnableAspectJAutoProxy(proxyTargetClass = false)
+@Aspect("perthis(this(com.fh.aop.IndexDao))")
+@Scope("prototype")
+//@Aspect
+@EnableAspectJAutoProxy(proxyTargetClass = true)
 public class LogAspectJ {
+
+	@Before("within(com.fh.aop.IndexDao)")
+	public void aopScope(){
+		System.out.println(this.hashCode());
+	}
+
+	@DeclareParents(value = "com.fh.aop.service.*+",defaultImpl = DefaultPersonImpl.class)
+	public static Person person;
+
+//	@Before("this(person)")
+//	public void parents(Person person){
+//		System.out.println("切面");
+//		person.query();
+//	}
 
 	/**
 	 * 当使用jdk做动态代理的时候,是基于共同的接口,做了一次实现,
@@ -27,13 +43,15 @@ public class LogAspectJ {
 	@Pointcut("target(com.fh.aop.IndexDao)")
 	public void aopTarget(){}
 
-	@Before(value = "aopTarget()")
-	public void log(){
-		System.out.println("before");
-	}
+//	@Before(value = "aopTarget()")
+//	public void log(){
+//		System.out.println("before");
+//	}
 
 	@Pointcut("@annotation(org.springframework.scheduling.annotation.Async)")
 	public void aopAnnotion(){}
+
+
 
 	@Around(value = "aopAnnotion()")
 	public void timeLog(ProceedingJoinPoint point){

@@ -4,5 +4,7 @@ public interface Dao {
 
 	String query();
 
+	void scope();
+
 
 }

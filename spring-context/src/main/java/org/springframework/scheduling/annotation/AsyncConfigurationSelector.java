@@ -45,6 +45,7 @@ public class AsyncConfigurationSelector extends AdviceModeImportSelector<EnableA
 	@Override
 	@Nullable
 	public String[] selectImports(AdviceMode adviceMode) {
+		//一般不做指定的话,都是第一个proxy
 		switch (adviceMode) {
 			case PROXY:
 				return new String[] {ProxyAsyncConfiguration.class.getName()};

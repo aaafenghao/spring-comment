@@ -41,11 +41,16 @@ import org.springframework.util.Assert;
 @Role(BeanDefinition.ROLE_INFRASTRUCTURE)
 public class ProxyAsyncConfiguration extends AbstractAsyncConfiguration {
 
+	/**
+	 * bean name org.springframework.context.annotation.internalAsyncAnnotationProcessor
+	 * @return
+	 */
 	@Bean(name = TaskManagementConfigUtils.ASYNC_ANNOTATION_PROCESSOR_BEAN_NAME)
 	@Role(BeanDefinition.ROLE_INFRASTRUCTURE)
 	public AsyncAnnotationBeanPostProcessor asyncAdvisor() {
 		Assert.notNull(this.enableAsync, "@EnableAsync annotation metadata was not injected");
 		AsyncAnnotationBeanPostProcessor bpp = new AsyncAnnotationBeanPostProcessor();
+		//添加到后置处理器中,但是目前不知道调用时机在哪
 		bpp.configure(this.executor, this.exceptionHandler);
 		Class<? extends Annotation> customAsyncAnnotation = this.enableAsync.getClass("annotation");
 		if (customAsyncAnnotation != AnnotationUtils.getDefaultValue(EnableAsync.class, "annotation")) {

@@ -64,6 +64,7 @@ public abstract class AbstractAsyncConfiguration implements ImportAware {
 
 	/**
 	 * Collect any {@link AsyncConfigurer} beans through autowiring.
+	 * 通过自动装配收集 AsyncConfigurer 的实现类
 	 */
 	@Autowired(required = false)
 	void setConfigurers(Collection<AsyncConfigurer> configurers) {
@@ -74,6 +75,8 @@ public abstract class AbstractAsyncConfiguration implements ImportAware {
 			throw new IllegalStateException("Only one AsyncConfigurer may exist");
 		}
 		AsyncConfigurer configurer = configurers.iterator().next();
+		//线程池
+		//异常处理类的赋值
 		this.executor = configurer::getAsyncExecutor;
 		this.exceptionHandler = configurer::getAsyncUncaughtExceptionHandler;
 	}

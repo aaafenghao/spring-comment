@@ -1,7 +1,7 @@
 package com.fh;
 
 import com.fh.config.AutoConfig;
-import com.fh.service.IndexService;
+
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 
 /**
@@ -25,8 +25,20 @@ public class ExampleApplication {
 		//初始化Spring容器
 		AnnotationConfigApplicationContext context = new AnnotationConfigApplicationContext(AutoConfig.class);
 		//从容器中获取信息
-		IndexService indexService = context.getBean(IndexService.class);
-		System.out.println(indexService);
+	/*	IndexService indexService = context.getBean(IndexService.class);
+		System.out.println(indexService);*/
+//		HHService bean = context.getBean(HHService.class);
+//		bean.hello();
+//		HHService bean2 = context.getBean(HHService.class);
+//		bean2.hello();
+		/**
+		 * BeanFactory和FactoryBean的区别
+		 *
+		 * BeanFactory:是一个Bean工厂,负责管理和生成Bean的一个工厂接口,是IOC容器的接口的底层实现
+		 * FactoryBean:是一个Bean,是一个可以生产对象和装饰对象的工厂Bean,交给Spring管理后,生成的Bean 由getObject决定
+		 */
+		Object factoryBeanConfig = context.getBean("factoryBeanConfig");
+		System.out.println(factoryBeanConfig);
 
 
 	}

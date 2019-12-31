@@ -5,6 +5,7 @@ import sun.misc.ProxyGenerator;
 
 import java.io.File;
 import java.io.IOException;
+import java.lang.reflect.Proxy;
 
 public class GenerateTest {
 
@@ -16,6 +17,8 @@ public class GenerateTest {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+
+
 
 	}
 }

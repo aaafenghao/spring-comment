@@ -3,6 +3,7 @@ package com.fh;
 import com.fh.config.AutoConfig;
 
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
+import org.springframework.scheduling.annotation.EnableAsync;
 
 /**
  * 启动类

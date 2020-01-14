@@ -63,7 +63,8 @@ public class AnnotationConfigApplicationContext extends GenericApplicationContex
 	 * through {@link #register} calls and then manually {@linkplain #refresh refreshed}.
 	 */
 	public AnnotationConfigApplicationContext() {
-		//创建BeanDefinitionReader --添加Bean定义信息
+		//创建一个读取注解的Bean定义的读取器
+		//什么是Bean定义? BeanDefinition
 		this.reader = new AnnotatedBeanDefinitionReader(this);
 		//创建BeanDefinationScanner
 		//内部包含了BeanDefination的注册
@@ -154,6 +155,10 @@ public class AnnotationConfigApplicationContext extends GenericApplicationContex
 	//---------------------------------------------------------------------
 
 	/**
+	 *
+	 * 两层：
+	 *     可以注册配置类
+	 *     可以注册单个Bean
 	 * Register one or more component classes to be processed.
 	 * <p>Note that {@link #refresh()} must be called in order for the context
 	 * to fully process the new classes.

@@ -8,12 +8,17 @@ import org.springframework.stereotype.Component;
 @Component(value = "factoryBeanConfig")
 public class FactoryBeanConfig implements FactoryBean {
 	@Override
-	public Object getObject() throws Exception {
+	public Object getObject() {
 		return new BeanFactoryConfig();
 	}
 
 	@Override
 	public Class<?> getObjectType() {
 		return BeanFactoryConfig.class;
+	}
+
+	@Override
+	public boolean isSingleton() {
+		return true;
 	}
 }

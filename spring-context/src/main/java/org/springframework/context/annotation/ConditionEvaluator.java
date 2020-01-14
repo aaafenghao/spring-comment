@@ -148,9 +148,12 @@ class ConditionEvaluator {
 				@Nullable Environment environment, @Nullable ResourceLoader resourceLoader) {
 
 			this.registry = registry;
+			//推断Bean工厂--根据BeanDefinition注册器类型判断
 			this.beanFactory = deduceBeanFactory(registry);
 			this.environment = (environment != null ? environment : deduceEnvironment(registry));
+			//推断资源加载器--根据BeanDefinition注册器类型判断
 			this.resourceLoader = (resourceLoader != null ? resourceLoader : deduceResourceLoader(registry));
+			//推断类加载器--
 			this.classLoader = deduceClassLoader(resourceLoader, this.beanFactory);
 		}
 

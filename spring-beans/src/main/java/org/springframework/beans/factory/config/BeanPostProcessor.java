@@ -20,6 +20,35 @@ import org.springframework.beans.BeansException;
 import org.springframework.lang.Nullable;
 
 /**
+ * BeanPostProcessor是Spring框架的提供的一个扩展类点(不止一个)
+ * 通过实现BeanPostProcessor接口,程序员就可以插手bean实例化的过程,从而减轻beanFactory的负担
+ * 值得说明的是这个接口可以设置多个,会形成一个列表,然后依次执行
+ * 比如AOP就是在bean实例后期间将切面逻辑织入bean实例中的
+ * AOP也正是通过BeanPostProcessor和IOC容器建立起来联系
+ *
+ *
+ * 可以看看Spring提供哪些默认的实现
+ * 简单介绍几个常用的:
+ * 1-ApplicationContextAwareProcessor(acap)
+ *   acap后置处理器的作用:为实现ApplicationContextAwareProcessor接口的Bean注入
+ *   ApplicationContext对象等
+ * 2-InitDestoryAnnotationBeanPostProcessor
+ *	 用来处理自定义的初始化方法和销毁方法
+ *	 Spring提供了3种自定义初始化和销毁方法分别是:
+ *	 一、通过@bean指定init-method和destroy-method属性
+ *	 二、bean实现Initializing接口和实现DisposableBean
+ *	 三、@PostConstrust,@PreDestroy
+ *	 为什么spring通过这三种都能完成对bean生命周期的回调呢
+ *	 可以通过InitDestroyAnnotationBeanPostProcessor的源码来解释
+ * 3-InstantiationAsareBeanPostProcessor
+ * 4-CommonAnnotationBeanPostProcessor
+ * 5-AutowireAnnotationBeanPostProcessor
+ * 6-RequireAnnotationBeanPostProcessor
+ * 7-BeanValidationPOstProcessor
+ * 8-AbstractAutoProxyCreator
+ *
+ *
+ *
  * Factory hook that allows for custom modification of new bean instances &mdash;
  * for example, checking for marker interfaces or wrapping beans with proxies.
  *
@@ -58,6 +87,8 @@ import org.springframework.lang.Nullable;
 public interface BeanPostProcessor {
 
 	/**
+	 * 初始化方法前
+	 *
 	 * Apply this {@code BeanPostProcessor} to the given new bean instance <i>before</i> any bean
 	 * initialization callbacks (like InitializingBean's {@code afterPropertiesSet}
 	 * or a custom init-method). The bean will already be populated with property values.
@@ -76,6 +107,8 @@ public interface BeanPostProcessor {
 	}
 
 	/**
+	 * 初始化方法后
+	 *
 	 * Apply this {@code BeanPostProcessor} to the given new bean instance <i>after</i> any bean
 	 * initialization callbacks (like InitializingBean's {@code afterPropertiesSet}
 	 * or a custom init-method). The bean will already be populated with property values.

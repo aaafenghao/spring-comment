@@ -67,7 +67,7 @@ public class AnnotationConfigApplicationContext extends GenericApplicationContex
 		//什么是Bean定义? BeanDefinition
 		this.reader = new AnnotatedBeanDefinitionReader(this);
 		//创建BeanDefinationScanner
-		//内部包含了BeanDefination的注册
+		//扫描类,转换成BeanDefinition
 		this.scanner = new ClassPathBeanDefinitionScanner(this);
 	}
 

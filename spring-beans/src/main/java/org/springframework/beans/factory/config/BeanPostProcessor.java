@@ -36,7 +36,7 @@ import org.springframework.lang.Nullable;
  *	 用来处理自定义的初始化方法和销毁方法
  *	 Spring提供了3种自定义初始化和销毁方法分别是:
  *	 一、通过@bean指定init-method和destroy-method属性
- *	 二、bean实现Initializing接口和实现DisposableBean
+ *	 二、bean实现InitializingBean接口和实现DisposableBean
  *	 三、@PostConstrust,@PreDestroy
  *	 为什么spring通过这三种都能完成对bean生命周期的回调呢
  *	 可以通过InitDestroyAnnotationBeanPostProcessor的源码来解释

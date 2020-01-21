@@ -23,6 +23,8 @@ public class ExampleApplication {
 	 */
 	public static void main(String[] args) {
 
+//		DefaultListableBeanFactory
+
 		//初始化Spring容器
 //		AnnotationConfigApplicationContext context = new AnnotationConfigApplicationContext(AutoConfig.class);
 		AnnotationConfigApplicationContext context = new AnnotationConfigApplicationContext();

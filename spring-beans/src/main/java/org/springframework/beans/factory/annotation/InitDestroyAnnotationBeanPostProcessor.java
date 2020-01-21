@@ -320,7 +320,7 @@ public class InitDestroyAnnotationBeanPostProcessor
 			this.checkedInitMethods = checkedInitMethods;
 			this.checkedDestroyMethods = checkedDestroyMethods;
 		}
-
+		//执行初始化方法
 		public void invokeInitMethods(Object target, String beanName) throws Throwable {
 			Collection<LifecycleElement> checkedInitMethods = this.checkedInitMethods;
 			Collection<LifecycleElement> initMethodsToIterate =
@@ -334,7 +334,7 @@ public class InitDestroyAnnotationBeanPostProcessor
 				}
 			}
 		}
-
+		//执行销毁方法
 		public void invokeDestroyMethods(Object target, String beanName) throws Throwable {
 			Collection<LifecycleElement> checkedDestroyMethods = this.checkedDestroyMethods;
 			Collection<LifecycleElement> destroyMethodsToUse =

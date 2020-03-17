@@ -130,6 +130,7 @@ class ComponentScanAnnotationParser {
 			}
 		});
 		//扫描和注册
+		//重要
 		return scanner.doScan(StringUtils.toStringArray(basePackages));
 	}
 

@@ -271,14 +271,22 @@ public class ConfigurationClassPostProcessor implements BeanDefinitionRegistryPo
 	public void processConfigBeanDefinitions(BeanDefinitionRegistry registry) {
 		List<BeanDefinitionHolder> configCandidates = new ArrayList<>();
 		String[] candidateNames = registry.getBeanDefinitionNames();
-
+		//现有的容器中的bd集合
+//		org.springframework.context.annotation.internalConfigurationAnnotationProcessor
+//		org.springframework.context.annotation.internalAutowiredAnnotationProcessor
+//		org.springframework.context.annotation.internalCommonAnnotationProcessor
+//		org.springframework.context.event.internalEventListenerProcessor
+//		org.springframework.context.event.internalEventListenerFactory
+//		autoConfig
 		for (String beanName : candidateNames) {
 			BeanDefinition beanDef = registry.getBeanDefinition(beanName);
+			//判断是否已经处理过了
+			//和5.0.x版本有出入
 			if (beanDef.getAttribute(ConfigurationClassUtils.CONFIGURATION_CLASS_ATTRIBUTE) != null) {
 				if (logger.isDebugEnabled()) {
 					logger.debug("Bean definition has already been processed as a configuration class: " + beanDef);
 				}
-			}
+			}//判断bd是否包含@Configuration注解
 			else if (ConfigurationClassUtils.checkConfigurationClassCandidate(beanDef, this.metadataReaderFactory)) {
 				configCandidates.add(new BeanDefinitionHolder(beanDef, beanName));
 			}
@@ -315,14 +323,17 @@ public class ConfigurationClassPostProcessor implements BeanDefinitionRegistryPo
 		}
 
 		// Parse each @Configuration class
-		//解析带有注解@Configuration的类
+		//创建解析类,解析@Configuration类
 		ConfigurationClassParser parser = new ConfigurationClassParser(
 				this.metadataReaderFactory, this.problemReporter, this.environment,
 				this.resourceLoader, this.componentScanBeanNameGenerator, registry);
-
+		//将类添加到Set结合中,去重
+		//AutoConfig类
 		Set<BeanDefinitionHolder> candidates = new LinkedHashSet<>(configCandidates);
+		//判断是否已经处理过
 		Set<ConfigurationClass> alreadyParsed = new HashSet<>(configCandidates.size());
 		do {
+			//配置类解析
 			parser.parse(candidates);
 			parser.validate();
 

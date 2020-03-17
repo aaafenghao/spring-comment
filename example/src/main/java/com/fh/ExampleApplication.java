@@ -8,6 +8,10 @@ import org.springframework.context.annotation.AnnotationConfigApplicationContext
 /**
  * 启动类
  *
+ * 1、BeanDefinition产生方式
+ * 注解类--AnnotationBd(User user)
+ * RootBeanDefinition root = new RootBeanDefinition(User);
+ *
  */
 public class ExampleApplication {
 
@@ -31,6 +35,7 @@ public class ExampleApplication {
 		//register 既可以解析配置类,也可以将一个类注册到Spring容器
 		context.register(AutoConfig.class);
 //		context.register(IndexService.class);
+//		context.addBeanFactoryPostProcessor(new MyBeanFactoryPostProcessor());
 		context.refresh();
 		//从容器中获取信息
 		IndexService indexService = context.getBean(IndexService.class);

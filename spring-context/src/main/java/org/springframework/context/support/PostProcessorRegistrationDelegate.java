@@ -35,10 +35,12 @@ import org.springframework.beans.factory.support.BeanDefinitionRegistryPostProce
 import org.springframework.beans.factory.support.DefaultListableBeanFactory;
 import org.springframework.beans.factory.support.MergedBeanDefinitionPostProcessor;
 import org.springframework.beans.factory.support.RootBeanDefinition;
+import org.springframework.context.annotation.AnnotationConfigUtils;
 import org.springframework.context.annotation.ConfigurationClassPostProcessor;
 import org.springframework.core.OrderComparator;
 import org.springframework.core.Ordered;
 import org.springframework.core.PriorityOrdered;
+import org.springframework.core.annotation.AnnotationUtils;
 import org.springframework.lang.Nullable;
 
 /**
@@ -59,15 +61,25 @@ final class PostProcessorRegistrationDelegate {
 		// Invoke BeanDefinitionRegistryPostProcessors first, if any.
 		Set<String> processedBeans = new HashSet<>();
 
+		//BeanDefinitionRegistryPostProcessor impl BeanFactoryPostProcessor
+		// 可以实现更复杂的功能
+		//BeanFactoryPostProcessor
+
 		if (beanFactory instanceof BeanDefinitionRegistry) {
 			BeanDefinitionRegistry registry = (BeanDefinitionRegistry) beanFactory;
-			List<BeanFactoryPostProcessor> regularPostProcessors = new ArrayList<>();
-			List<BeanDefinitionRegistryPostProcessor> registryProcessors = new ArrayList<>();
-			//循环执行BeanDefinitionRegistryPostProcessor 的bean定义注册的后置处理器
+			List<BeanFactoryPostProcessor> regularPostProcessors = new ArrayList<>();//程序员手动添加的
+			List<BeanDefinitionRegistryPostProcessor> registryProcessors = new ArrayList<>();//程序员手动添加的
+			//收集 BeanDefinitionRegistryPostProcessor和BeanFactoryPostProcessor类到集合中
+
+			//BeanFactoryPostProcessor
+			//BeanDefinitionRegistryPostProcessor  对BeanFactoryPostProcessor方法进行了扩展
+			//BeanDefinitionRegistryPostProcessor 方法先执行了
 			for (BeanFactoryPostProcessor postProcessor : beanFactoryPostProcessors) {
+				//类型区分,接口还是接口的父类
 				if (postProcessor instanceof BeanDefinitionRegistryPostProcessor) {
 					BeanDefinitionRegistryPostProcessor registryProcessor =
 							(BeanDefinitionRegistryPostProcessor) postProcessor;
+					//扩展方法的执行
 					registryProcessor.postProcessBeanDefinitionRegistry(registry);
 					registryProcessors.add(registryProcessor);
 				}
@@ -80,20 +92,29 @@ final class PostProcessorRegistrationDelegate {
 			// uninitialized to let the bean factory post-processors apply to them!
 			// Separate between BeanDefinitionRegistryPostProcessors that implement
 			// PriorityOrdered, Ordered, and the rest.
-			List<BeanDefinitionRegistryPostProcessor> currentRegistryProcessors = new ArrayList<>();
+			//存放Spring内部实现了BeanDefinitionRegistryPostProcessor接口的实现类
+			List<BeanDefinitionRegistryPostProcessor> currentRegistryProcessors = new ArrayList<>();//Spring内部的
 
 			// First, invoke the BeanDefinitionRegistryPostProcessors that implement PriorityOrdered.
+			//获取Spring内部实现了BeanDefinitionRegistryPostProcessor接口的实现类
+			//org.springframework.context.annotation.internalConfigurationAnnotationProcessor
+			//根据Bean的类型获取Bean的名字
 			String[] postProcessorNames =
 					beanFactory.getBeanNamesForType(BeanDefinitionRegistryPostProcessor.class, true, false);
+			//在reader对象构件的时候,注册的
+			//AnnotationConfigUtils.registerAnnotationConfigProcessors();
+			//是否实现了PriorityOrdered接口,实现的话,会添加到相关的集合中
 			for (String ppName : postProcessorNames) {
 				if (beanFactory.isTypeMatch(ppName, PriorityOrdered.class)) {
 					currentRegistryProcessors.add(beanFactory.getBean(ppName, BeanDefinitionRegistryPostProcessor.class));
 					processedBeans.add(ppName);
 				}
 			}
+			//将实现了PriorityOrdered接口的bdrp进行排序
 			sortPostProcessors(currentRegistryProcessors, beanFactory);
+			//将Spring内部的bdrp合并到bdrp集合中
 			registryProcessors.addAll(currentRegistryProcessors);
-			//上边没有执行,就这个地方执行了 --内部包含了对注解的扫描和Bean定义的注册
+			//就这个地方执行了 --内部包含了对注解的扫描和Bean定义的注册
 			invokeBeanDefinitionRegistryPostProcessors(currentRegistryProcessors, registry);
 			currentRegistryProcessors.clear();
 
@@ -107,6 +128,7 @@ final class PostProcessorRegistrationDelegate {
 			}
 			sortPostProcessors(currentRegistryProcessors, beanFactory);
 			registryProcessors.addAll(currentRegistryProcessors);
+			//执行实现的相关方法
 			invokeBeanDefinitionRegistryPostProcessors(currentRegistryProcessors, registry);
 			currentRegistryProcessors.clear();
 
@@ -275,7 +297,10 @@ final class PostProcessorRegistrationDelegate {
 			Collection<? extends BeanDefinitionRegistryPostProcessor> postProcessors, BeanDefinitionRegistry registry) {
 		//ConfigurationClassPostProcessor --包括了扫描和注册
 		for (BeanDefinitionRegistryPostProcessor postProcessor : postProcessors) {
+			//调用扩展方法
 			postProcessor.postProcessBeanDefinitionRegistry(registry);
+			//ConfigurationClassPostProcessor
+
 		}
 	}
 

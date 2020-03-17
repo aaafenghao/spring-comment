@@ -78,6 +78,7 @@ import org.springframework.core.io.ResourceLoader;
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 import org.springframework.core.io.support.ResourcePatternResolver;
 import org.springframework.lang.Nullable;
+import org.springframework.stereotype.Component;
 import org.springframework.util.Assert;
 import org.springframework.util.ObjectUtils;
 import org.springframework.util.ReflectionUtils;
@@ -526,6 +527,7 @@ public abstract class AbstractApplicationContext extends DefaultResourceLoader
 			// Prepare the bean factory for use in this context.
 			//准备在当前上下文使用的BeanFactory
 			//向工厂中添加一些Bean对象
+			//准备Bean工厂
 			prepareBeanFactory(beanFactory);
 
 			try {
@@ -534,8 +536,9 @@ public abstract class AbstractApplicationContext extends DefaultResourceLoader
 				postProcessBeanFactory(beanFactory);//空实现
 
 				// Invoke factory processors registered as beans in the context.
-				//执行在当前上下文中的后置处理器
+				//执行Spring内部的和自定的bfp
 				//AbstractApplicationContext --包含了BeanDefinitin的注册
+				//对BeanDefinition的扫描,解析,注册等
 				invokeBeanFactoryPostProcessors(beanFactory);
 
 				// Register bean processors that intercept bean creation.
@@ -660,13 +663,20 @@ public abstract class AbstractApplicationContext extends DefaultResourceLoader
 	 */
 	protected void prepareBeanFactory(ConfigurableListableBeanFactory beanFactory) {
 		// Tell the internal bean factory to use the context's class loader etc.
+		//添加了类加载器
 		beanFactory.setBeanClassLoader(getClassLoader());
+		//添加Bean表达式解析器，能够获取Bean当中的属性在前台页面
 		beanFactory.setBeanExpressionResolver(new StandardBeanExpressionResolver(beanFactory.getBeanClassLoader()));
+		//对象和String类型的转换  <properties ref="dao">
 		beanFactory.addPropertyEditorRegistrar(new ResourceEditorRegistrar(this, getEnvironment()));
 
 		// Configure the bean factory with context callbacks.
 		//添加一个后置处理器
+		//BeanPostProcess--能够插手Bean的实例化过程
+		//目前维护了一个list的后置处理器,后续在Bean的实例化的过程中会循环List,进行Bean实例的调整
 		beanFactory.addBeanPostProcessor(new ApplicationContextAwareProcessor(this));
+		//忽略相关接口的注入
+		//在应用类中添加这些接口,是注入不了的
 		beanFactory.ignoreDependencyInterface(EnvironmentAware.class);
 		beanFactory.ignoreDependencyInterface(EmbeddedValueResolverAware.class);
 		beanFactory.ignoreDependencyInterface(ResourceLoaderAware.class);
@@ -676,12 +686,14 @@ public abstract class AbstractApplicationContext extends DefaultResourceLoader
 
 		// BeanFactory interface not registered as resolvable type in a plain factory.
 		// MessageSource registered (and found for autowiring) as a bean.
+		//依赖替换   BeanFactory >  beanFactory
 		beanFactory.registerResolvableDependency(BeanFactory.class, beanFactory);
 		beanFactory.registerResolvableDependency(ResourceLoader.class, this);
 		beanFactory.registerResolvableDependency(ApplicationEventPublisher.class, this);
 		beanFactory.registerResolvableDependency(ApplicationContext.class, this);
 
 		// Register early post-processor for detecting inner beans as ApplicationListeners.
+		// 添加后置处理器
 		beanFactory.addBeanPostProcessor(new ApplicationListenerDetector(this));
 
 		// Detect a LoadTimeWeaver and prepare for weaving, if found.
@@ -690,8 +702,11 @@ public abstract class AbstractApplicationContext extends DefaultResourceLoader
 			// Set a temporary ClassLoader for type matching.
 			beanFactory.setTempClassLoader(new ContextTypeMatchClassLoader(beanFactory.getBeanClassLoader()));
 		}
-
+        //添加了一些默认的配置信息
 		// Register default environment beans.
+		//如果自定义的Bean中没有名字为"systemProperties"和"systemEnvironment"的Bean
+		//则注册两个Bean,key为systemProperties和systemEnvironment,value为Map
+		//这两个Bean就是一些系统配置和系统环境变量信息
 		if (!beanFactory.containsLocalBean(ENVIRONMENT_BEAN_NAME)) {
 			beanFactory.registerSingleton(ENVIRONMENT_BEAN_NAME, getEnvironment());
 		}
@@ -720,6 +735,9 @@ public abstract class AbstractApplicationContext extends DefaultResourceLoader
 	 */
 	protected void invokeBeanFactoryPostProcessors(ConfigurableListableBeanFactory beanFactory) {
 		//执行BeanFactory的后置处理器 --包含了BeanDefinition的注册
+		//getBeanFactoryPostProcessors()--获取程序员自定义的,没有交给Spring去加载的,自己手动添加到Spring容器的
+		//addBeanFactoryPostProcessor 手动加载到Spring容器中的
+		//@Component添加组件注解的,是交给Spring管理的,getBeanFactoryPostProcessors()方法是获取不到的
 		PostProcessorRegistrationDelegate.invokeBeanFactoryPostProcessors(beanFactory, getBeanFactoryPostProcessors());
 
 		// Detect a LoadTimeWeaver and prepare for weaving, if found in the meantime

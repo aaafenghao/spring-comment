@@ -2,6 +2,7 @@ package com.fh;
 
 import com.fh.config.AutoConfig;
 
+import com.fh.mybatis.dao.CardDao;
 import com.fh.service.IndexService;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 
@@ -38,8 +39,8 @@ public class ExampleApplication {
 //		context.addBeanFactoryPostProcessor(new MyBeanFactoryPostProcessor());
 		context.refresh();
 		//从容器中获取信息
-		IndexService indexService = context.getBean(IndexService.class);
-		System.out.println(indexService);
+//		IndexService indexService = context.getBean(IndexService.class);
+//		System.out.println(indexService);
 
 
 
@@ -56,6 +57,10 @@ public class ExampleApplication {
 		 */
 //		Object factoryBeanConfig = context.getBean("factoryBeanConfig");
 ////		System.out.println(factoryBeanConfig);
+
+		//测试Mybatis和Spring整合相关代码
+		CardDao cardDao = (CardDao)context.getBean("cardDao");
+		cardDao.list("111");
 
 
 	}

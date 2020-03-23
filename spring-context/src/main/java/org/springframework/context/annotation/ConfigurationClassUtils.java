@@ -125,6 +125,7 @@ abstract class ConfigurationClassUtils {
 
 		Map<String, Object> config = metadata.getAnnotationAttributes(Configuration.class.getName());
 		//如果添加了Configuration注解,就不会判断下面的注解
+		//如果存在则Spring认为他是一个全注解的类
 		if (config != null && !Boolean.FALSE.equals(config.get("proxyBeanMethods"))) {
 			beanDef.setAttribute(CONFIGURATION_CLASS_ATTRIBUTE, CONFIGURATION_CLASS_FULL);
 		}
@@ -132,6 +133,7 @@ abstract class ConfigurationClassUtils {
 //		candidateIndicators.add(ComponentScan.class.getName());
 //		candidateIndicators.add(Import.class.getName());
 //		candidateIndicators.add(ImportResource.class.getName());
+		//如果不存在则Spring认为他是一个部分注解的类
 		else if (config != null || isConfigurationCandidate(metadata)) {
 			beanDef.setAttribute(CONFIGURATION_CLASS_ATTRIBUTE, CONFIGURATION_CLASS_LITE);
 		}

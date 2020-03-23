@@ -285,19 +285,9 @@ public class ClassPathBeanDefinitionScanner extends ClassPathScanningCandidateCo
 				candidate.setScope(scopeMetadata.getScopeName());
 				String beanName = this.beanNameGenerator.generateBeanName(candidate, this.registry);
 				if (candidate instanceof AbstractBeanDefinition) {
-					//设置一些默认值
-//					lazyInit
-//					autowireMode
-//					dependencyCheck
-//					initMethodName
-//					enforceInitMethod
-//					destroyMethodName
-//					enforceDestroyMethod
-					//在上面的方法中读取的配置类中的懒加载配置,这个地方应该就可以用到了
 					postProcessBeanDefinition((AbstractBeanDefinition) candidate, beanName);
 				}
 				if (candidate instanceof AnnotatedBeanDefinition) {
-					//单个bd上的注解处理,对上面的默认值进行覆盖处理
 					AnnotationConfigUtils.processCommonDefinitionAnnotations((AnnotatedBeanDefinition) candidate);
 				}
 				if (checkCandidate(beanName, candidate)) {

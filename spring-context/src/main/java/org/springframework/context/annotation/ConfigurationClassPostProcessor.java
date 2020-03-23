@@ -269,7 +269,6 @@ public class ConfigurationClassPostProcessor implements BeanDefinitionRegistryPo
 	 * {@link Configuration} classes.
 	 */
 	public void processConfigBeanDefinitions(BeanDefinitionRegistry registry) {
-		//配置类的Bd持有者
 		List<BeanDefinitionHolder> configCandidates = new ArrayList<>();
 		String[] candidateNames = registry.getBeanDefinitionNames();
 		//现有的容器中的bd集合
@@ -279,11 +278,6 @@ public class ConfigurationClassPostProcessor implements BeanDefinitionRegistryPo
 //		org.springframework.context.event.internalEventListenerProcessor
 //		org.springframework.context.event.internalEventListenerFactory
 //		autoConfig
-
-		/**
-		 * Full
-		 * Lite
-		 */
 		for (String beanName : candidateNames) {
 			BeanDefinition beanDef = registry.getBeanDefinition(beanName);
 			//判断是否已经处理过了
@@ -293,14 +287,12 @@ public class ConfigurationClassPostProcessor implements BeanDefinitionRegistryPo
 					logger.debug("Bean definition has already been processed as a configuration class: " + beanDef);
 				}
 			}//判断bd是否包含@Configuration注解
-			//属性标记
 			else if (ConfigurationClassUtils.checkConfigurationClassCandidate(beanDef, this.metadataReaderFactory)) {
 				configCandidates.add(new BeanDefinitionHolder(beanDef, beanName));
 			}
 		}
 
 		// Return immediately if no @Configuration classes were found
-		//判断是否有注解类
 		if (configCandidates.isEmpty()) {
 			return;
 		}
@@ -313,7 +305,6 @@ public class ConfigurationClassPostProcessor implements BeanDefinitionRegistryPo
 		});
 
 		// Detect any custom bean name generation strategy supplied through the enclosing application context
-		//Bean名称生成策略的处理
 		SingletonBeanRegistry sbr = null;
 		if (registry instanceof SingletonBeanRegistry) {
 			sbr = (SingletonBeanRegistry) registry;
@@ -336,7 +327,7 @@ public class ConfigurationClassPostProcessor implements BeanDefinitionRegistryPo
 		ConfigurationClassParser parser = new ConfigurationClassParser(
 				this.metadataReaderFactory, this.problemReporter, this.environment,
 				this.resourceLoader, this.componentScanBeanNameGenerator, registry);
-		//将类添加到Set结合中,防止重复类
+		//将类添加到Set结合中,去重
 		//AutoConfig类
 		Set<BeanDefinitionHolder> candidates = new LinkedHashSet<>(configCandidates);
 		//判断是否已经处理过

@@ -307,6 +307,8 @@ public class ClassPathScanningCandidateComponentProvider implements EnvironmentC
 	 * Scan the class path for candidate components.
 	 * @param basePackage the package to check for annotated classes
 	 * @return a corresponding Set of autodetected bean definitions
+	 *
+	 * asm实现
 	 */
 	//扫描类路径查询候选组件
 	public Set<BeanDefinition> findCandidateComponents(String basePackage) {

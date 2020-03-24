@@ -8,6 +8,7 @@ import org.springframework.scheduling.annotation.EnableAsync;
 @ComponentScan("com.fh")
 @Configuration
 @EnableAsync
+//@Import(MyImportSelector.class)
 public class AutoConfig {
 
 //	@Bean(initMethod = "initMethod")

@@ -134,6 +134,7 @@ class ComponentScanAnnotationParser {
 		//扫描和注册
 		//重要
 		//包含了对默认值的处理,单个bd的值得处理等
+		//返回值包含Set<BeanDefinitionHolder>
 		return scanner.doScan(StringUtils.toStringArray(basePackages));
 	}
 

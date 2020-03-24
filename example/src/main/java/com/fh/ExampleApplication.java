@@ -2,6 +2,7 @@ package com.fh;
 
 import com.fh.config.AutoConfig;
 
+import com.fh.imports.dao.TestDao;
 import com.fh.mybatis.dao.CardDao;
 import com.fh.service.IndexService;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
@@ -59,9 +60,12 @@ public class ExampleApplication {
 ////		System.out.println(factoryBeanConfig);
 
 		//测试Mybatis和Spring整合相关代码
-		CardDao cardDao = (CardDao)context.getBean("cardDao");
-		cardDao.list("111");
+//		CardDao cardDao = (CardDao)context.getBean("cardDao");
+//		cardDao.list("111");
 
+		//动态添加切面
+		TestDao testDao = (TestDao) context.getBean("testDao");
+		testDao.test();
 
 	}
 }

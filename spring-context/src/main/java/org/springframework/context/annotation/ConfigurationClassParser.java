@@ -260,7 +260,11 @@ class ConfigurationClassParser {
 	 * @param configClass the configuration class being build
 	 * @param sourceClass a source class
 	 * @return the superclass, or {@code null} if none found or previously processed
+	 *
+	 * 扫描普通类,并且放到Map中去
+	 * 普通类--添加@Component注解的类
 	 */
+
 	@Nullable
 	protected final SourceClass doProcessConfigurationClass(ConfigurationClass configClass, SourceClass sourceClass)
 			throws IOException {
@@ -319,6 +323,8 @@ class ConfigurationClassParser {
 		//普通的Import
 		//ImportSelector
 		//ImportBeanDefinitionRegistrar
+
+		//判断一组类是不是Imports(3种Import)
 		processImports(configClass, sourceClass, getImports(sourceClass), true);
 
 		// Process any @ImportResource annotations
@@ -603,6 +609,7 @@ class ConfigurationClassParser {
 						ImportBeanDefinitionRegistrar registrar =
 								ParserStrategyUtils.instantiateClass(candidateClass, ImportBeanDefinitionRegistrar.class,
 										this.environment, this.resourceLoader, this.registry);
+						//添加到Map中,后续再处理
 						configClass.addImportBeanDefinitionRegistrar(registrar, currentSourceClass.getMetadata());
 					}
 					else {

@@ -42,9 +42,6 @@ public class ExampleApplication {
 		//从容器中获取信息
 //		IndexService indexService = context.getBean(IndexService.class);
 //		System.out.println(indexService);
-
-
-
 //		HHService bean = context.getBean(HHService.class);
 //		bean.hello();
 //		HHService bean2 = context.getBean(HHService.class);
@@ -57,15 +54,15 @@ public class ExampleApplication {
 		 * &factoryBeanConfig
 		 */
 //		Object factoryBeanConfig = context.getBean("factoryBeanConfig");
-////		System.out.println(factoryBeanConfig);
-
+////	System.out.println(factoryBeanConfig);
 		//测试Mybatis和Spring整合相关代码
-//		CardDao cardDao = (CardDao)context.getBean("cardDao");
-//		cardDao.list("111");
+		CardDao cardDao = (CardDao)context.getBean("cardDao");
+		cardDao.list("111");
 
 		//动态添加切面
-		TestDao testDao = (TestDao) context.getBean("testDao");
-		testDao.test();
+//		TestDao testDao = (TestDao) context.getBean("testDao");
+//		testDao.test();
+
 
 	}
 }

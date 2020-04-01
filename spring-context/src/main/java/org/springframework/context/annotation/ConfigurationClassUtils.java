@@ -88,6 +88,7 @@ abstract class ConfigurationClassUtils {
 		if (className == null || beanDef.getFactoryMethodName() != null) {
 			return false;
 		}
+		//添加了注解和没有添加注解获取元数据的方式不同
 		//添加了注解的
 		AnnotationMetadata metadata;
 		if (beanDef instanceof AnnotatedBeanDefinition &&

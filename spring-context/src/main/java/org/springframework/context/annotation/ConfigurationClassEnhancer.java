@@ -21,6 +21,7 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.lang.reflect.Proxy;
 import java.util.Arrays;
+import java.util.concurrent.locks.ReentrantLock;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -120,10 +121,18 @@ class ConfigurationClassEnhancer {
 	private Enhancer newEnhancer(Class<?> configSuperClass, @Nullable ClassLoader classLoader) {
 		Enhancer enhancer = new Enhancer();
 		enhancer.setSuperclass(configSuperClass);
+		//通过接口获取BeanFactory
 		enhancer.setInterfaces(new Class<?>[] {EnhancedConfiguration.class});
 		enhancer.setUseFactory(false);
 		enhancer.setNamingPolicy(SpringNamingPolicy.INSTANCE);
+		//BeanFactoryAwareGeneratorStrategy是一个生成策略
+		//主要为生成的CGLIB类中添加成员变量$$beanfactory
+		//同时基于接口EnhancedConfiguration的父接口BeanFactoryAware中的setBeanFactory方法,
+		//设置此变量的值为当前Context中的BeanFactory,如此一来我们这个cglib代理对象BeanFactory
+		//有了BeanFactory就能获取对象,而不用通过方法获得对象了,因为通过方法调用获得对象不能控制器过滤
+		//该BeanFactory的作用是在this调用时拦截该调用,并在BeanFactory中直接获得该对象
 		enhancer.setStrategy(new BeanFactoryAwareGeneratorStrategy(classLoader));
+		//回调过滤器
 		enhancer.setCallbackFilter(CALLBACK_FILTER);
 		enhancer.setCallbackTypes(CALLBACK_FILTER.getCallbackTypes());
 		return enhancer;
@@ -315,7 +324,7 @@ class ConfigurationClassEnhancer {
 		@Nullable
 		public Object intercept(Object enhancedConfigInstance, Method beanMethod, Object[] beanMethodArgs,
 					MethodProxy cglibMethodProxy) throws Throwable {
-
+			//获取BeanFactory属性对象
 			ConfigurableBeanFactory beanFactory = getBeanFactory(enhancedConfigInstance);
 			String beanName = BeanAnnotationHelper.determineBeanNameFor(beanMethod);
 

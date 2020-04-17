@@ -83,6 +83,8 @@ import org.springframework.util.Assert;
 import org.springframework.util.ObjectUtils;
 import org.springframework.util.ReflectionUtils;
 
+import javax.annotation.PostConstruct;
+
 /**
  * Abstract implementation of the {@link org.springframework.context.ApplicationContext}
  * interface. Doesn't mandate the type of storage used for configuration; simply
@@ -533,6 +535,7 @@ public abstract class AbstractApplicationContext extends DefaultResourceLoader
 			try {
 				// Allows post-processing of the bean factory in context subclasses.
 				//在当前上下文的子类允许进行后置处理
+
 				postProcessBeanFactory(beanFactory);//空实现
 
 				// Invoke factory processors registered as beans in the context.
@@ -542,15 +545,19 @@ public abstract class AbstractApplicationContext extends DefaultResourceLoader
 				invokeBeanFactoryPostProcessors(beanFactory);
 
 				// Register bean processors that intercept bean creation.
-				//注册当前上下文中的后置处理器
+				//BeanPostProcessor
+				//MergedBeanDefinitionPostProcessor
+				//将实现了这些接口的类添加到Spring容器中
 				registerBeanPostProcessors(beanFactory);
+				//-----------------------------------------------------------/
 
 				// Initialize message source for this context.
-				//初始化消息源--就是看看有没有,没有的话就添加到单例池中
+				//初始化消息源--就是看看messageSource,没有的话就添加到单例池中
 				initMessageSource();
 
 				// Initialize event multicaster for this context.
 				//初始化事件传播器--查看BeanFactory中有没有,没有的话就添加到单例池
+				//applicationEventMulticaster的初始化
 				initApplicationEventMulticaster();
 
 				// Initialize other special beans in specific context subclasses.

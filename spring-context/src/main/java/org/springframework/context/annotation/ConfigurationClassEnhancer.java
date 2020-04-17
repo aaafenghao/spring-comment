@@ -75,8 +75,11 @@ class ConfigurationClassEnhancer {
 
 	// The callbacks to use. Note that these callbacks must be stateless.
 	private static final Callback[] CALLBACKS = new Callback[] {
+			//增强方法,不用每次都调用具体的方法
 			new BeanMethodInterceptor(),
+			//从目前来看,这个类好像没啥用
 			new BeanFactoryAwareMethodInterceptor(),
+			//空实现
 			NoOp.INSTANCE
 	};
 
@@ -96,6 +99,7 @@ class ConfigurationClassEnhancer {
 	 * @return the enhanced subclass
 	 */
 	public Class<?> enhance(Class<?> configClass, @Nullable ClassLoader classLoader) {
+		//判断是否已经被代理过
 		if (EnhancedConfiguration.class.isAssignableFrom(configClass)) {
 			if (logger.isDebugEnabled()) {
 				logger.debug(String.format("Ignoring request to enhance %s as it has " +
@@ -107,6 +111,7 @@ class ConfigurationClassEnhancer {
 			}
 			return configClass;
 		}
+		//没有被代理过,进行代理
 		Class<?> enhancedClass = createClass(newEnhancer(configClass, classLoader));
 		if (logger.isTraceEnabled()) {
 			logger.trace(String.format("Successfully enhanced %s; enhanced class name is: %s",
@@ -132,7 +137,7 @@ class ConfigurationClassEnhancer {
 		//有了BeanFactory就能获取对象,而不用通过方法获得对象了,因为通过方法调用获得对象不能控制器过滤
 		//该BeanFactory的作用是在this调用时拦截该调用,并在BeanFactory中直接获得该对象
 		enhancer.setStrategy(new BeanFactoryAwareGeneratorStrategy(classLoader));
-		//回调过滤器
+		//回调过滤器,进行方法拦截
 		enhancer.setCallbackFilter(CALLBACK_FILTER);
 		enhancer.setCallbackTypes(CALLBACK_FILTER.getCallbackTypes());
 		return enhancer;
@@ -329,6 +334,7 @@ class ConfigurationClassEnhancer {
 			String beanName = BeanAnnotationHelper.determineBeanNameFor(beanMethod);
 
 			// Determine whether this bean is a scoped-proxy
+			//判断是否为Scope代理
 			if (BeanAnnotationHelper.isScopedProxy(beanMethod)) {
 				String scopedBeanName = ScopedProxyCreator.getTargetBeanName(beanName);
 				if (beanFactory.isCurrentlyInCreation(scopedBeanName)) {
@@ -343,6 +349,8 @@ class ConfigurationClassEnhancer {
 			// proxy that intercepts calls to getObject() and returns any cached bean instance.
 			// This ensures that the semantics of calling a FactoryBean from within @Bean methods
 			// is the same as that of referring to a FactoryBean within XML. See SPR-6602.
+			//判断beanName是否为FactoryBean
+			//判断依据是BeanFactory中是否存在$beanName和beanName
 			if (factoryContainsBean(beanFactory, BeanFactory.FACTORY_BEAN_PREFIX + beanName) &&
 					factoryContainsBean(beanFactory, beanName)) {
 				Object factoryBean = beanFactory.getBean(BeanFactory.FACTORY_BEAN_PREFIX + beanName);
@@ -354,7 +362,8 @@ class ConfigurationClassEnhancer {
 					return enhanceFactoryBean(factoryBean, beanMethod.getReturnType(), beanFactory, beanName);
 				}
 			}
-
+			//一个牛逼的判断
+			//调用的方法是不是当前正在执行的方法
 			if (isCurrentlyInvokedFactoryMethod(beanMethod)) {
 				// The factory is calling the bean method in order to instantiate and register the bean
 				// (i.e. via a getBean() call) -> invoke the super implementation of the method to actually
@@ -382,6 +391,7 @@ class ConfigurationClassEnhancer {
 			// the bean method, direct or indirect. The bean may have already been marked
 			// as 'in creation' in certain autowiring scenarios; if so, temporarily set
 			// the in-creation status to false in order to avoid an exception.
+			//是否正在创建
 			boolean alreadyInCreation = beanFactory.isCurrentlyInCreation(beanName);
 			try {
 				if (alreadyInCreation) {
@@ -482,6 +492,7 @@ class ConfigurationClassEnhancer {
 		 * to happen on Groovy classes).
 		 */
 		private boolean isCurrentlyInvokedFactoryMethod(Method method) {
+			//获取当前正在执行的方法,当前执行的方法和调用的方法不是一个方法
 			Method currentlyInvoked = SimpleInstantiationStrategy.getCurrentlyInvokedFactoryMethod();
 			return (currentlyInvoked != null && method.getName().equals(currentlyInvoked.getName()) &&
 					Arrays.equals(method.getParameterTypes(), currentlyInvoked.getParameterTypes()));

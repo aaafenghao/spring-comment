@@ -10,6 +10,7 @@ import org.springframework.core.type.AnnotationMetadata;
 public class MyImportSelector implements ImportSelector {
 	@Override
 	public String[] selectImports(AnnotationMetadata importingClassMetadata) {
+		//返回需要实例化的对象的名称
 		return new String[]{TestDaoImpl3.class.getName()};
 	}
 }

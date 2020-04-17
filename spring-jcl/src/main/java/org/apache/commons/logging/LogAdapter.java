@@ -26,7 +26,8 @@ import org.apache.logging.log4j.spi.LoggerContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.spi.LocationAwareLogger;
-
+//Spring会先适配log4j2和slf4j
+//没有的话会使用jul
 /**
  * Spring's common JCL adapter behind {@link LogFactory} and {@link LogFactoryService}.
  * Detects the presence of Log4j 2.x / SLF4J, falling back to {@code java.util.logging}.
@@ -46,26 +47,33 @@ final class LogAdapter {
 
 
 	private static final LogApi logApi;
-
+	//日志框架的选择
 	static {
 		if (isPresent(LOG4J_SPI)) {
 			if (isPresent(LOG4J_SLF4J_PROVIDER) && isPresent(SLF4J_SPI)) {
 				// log4j-to-slf4j bridge -> we'll rather go with the SLF4J SPI;
 				// however, we still prefer Log4j over the plain SLF4J API since
 				// the latter does not have location awareness support.
+				// log4j到slf4j的桥接 -> 我们还是选择SLF4J SPI。
+				// 然而，我们仍然倾向于使用Log4j，而不是普通的SLF4J API，因为
+				// 后者没有位置意识的支持。
 				logApi = LogApi.SLF4J_LAL;
 			}
 			else {
 				// Use Log4j 2.x directly, including location awareness support
+				// 直接使用 Log4j 2.x ,包括位置感知支持
 				logApi = LogApi.LOG4J;
 			}
 		}
+		//slf4j-api--在这个包中
 		else if (isPresent(SLF4J_SPI)) {
 			// Full SLF4J SPI including location awareness support
+			// 完整的slf4j spi 包括位置识别支持
 			logApi = LogApi.SLF4J_LAL;
 		}
 		else if (isPresent(SLF4J_API)) {
 			// Minimal SLF4J API without location awareness support
+			// 最低限度的slf4j api 不支持位置识别功能
 			logApi = LogApi.SLF4J;
 		}
 		else {

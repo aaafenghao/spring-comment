@@ -9,7 +9,6 @@ import java.lang.reflect.Proxy;
 public class TestDaoImpl3 implements  BeanPostProcessor {
 
 
-
 	@Override
 	public Object postProcessBeforeInitialization(Object bean, String beanName) throws BeansException {
 		if("testDao".equals(beanName)){

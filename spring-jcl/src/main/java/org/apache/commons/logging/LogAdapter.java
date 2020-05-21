@@ -57,11 +57,13 @@ final class LogAdapter {
 				// log4j到slf4j的桥接 -> 我们还是选择SLF4J SPI。
 				// 然而，我们仍然倾向于使用Log4j，而不是普通的SLF4J API，因为
 				// 后者没有位置意识的支持。
+				//需要引入log4j-to-slf4j包
 				logApi = LogApi.SLF4J_LAL;
 			}
 			else {
 				// Use Log4j 2.x directly, including location awareness support
 				// 直接使用 Log4j 2.x ,包括位置感知支持
+				// 直接引入log4j-api,log4j-core即可
 				logApi = LogApi.LOG4J;
 			}
 		}
@@ -71,6 +73,7 @@ final class LogAdapter {
 			// 完整的slf4j spi 包括位置识别支持
 			logApi = LogApi.SLF4J_LAL;
 		}
+		//slf4j-api--也在这个包中,可能是以前老的版本没有上面的SPI吧--可能只是猜测
 		else if (isPresent(SLF4J_API)) {
 			// Minimal SLF4J API without location awareness support
 			// 最低限度的slf4j api 不支持位置识别功能
@@ -78,6 +81,7 @@ final class LogAdapter {
 		}
 		else {
 			// java.util.logging as default
+			//默认的日志实现框架,但是这个日志打印格式修改不了
 			logApi = LogApi.JUL;
 		}
 	}
@@ -106,6 +110,11 @@ final class LogAdapter {
 				// case of Log4j or SLF4J, we are trying to prevent early initialization
 				// of the JavaUtilLog adapter - e.g. by a JVM in debug mode - when eagerly
 				// trying to parse the bytecode for all the cases of this switch clause.
+				//在这里也要防守性的使用惰性的初始化适配器类,因为这里的
+				//java.logging 模块在JDK9上默认是不存在的,我们要求如果Log4j和slf4j都不存在,
+				//那么它的存在就会被认为是一个很好的例子,但是在在Log4j或slf4j的情况下,
+				//我们试图防止早期初始化JavaUtilLog 适配器,例如JVM在debug模式下,急切的希望试图解析这个
+				//swatch子句的所有情况的字节码
 				return JavaUtilAdapter.createLog(name);
 		}
 	}

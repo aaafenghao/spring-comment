@@ -241,7 +241,14 @@ public abstract class AbstractBeanFactory extends FactoryBeanRegistrySupport imp
 	@SuppressWarnings("unchecked")
 	protected <T> T doGetBean(final String name, @Nullable final Class<T> requiredType,
 			@Nullable final Object[] args, boolean typeCheckOnly) throws BeansException {
-
+		/**
+		 * 通过name获取BeanName,这里不使用name直接作为Beanname有两个原因
+		 * 1、 name可能会以&开头,表明调用者想获取FactoryBean本身,而非实现类
+		 * 	   所创建的Bean,在BeanFactory中,FactoryBean的实现类和其他的方式
+		 * 	   是一致的，即Map<BeanName,Bean> Beanname中是没有&这个字符的
+		 * 	   将name的首字符&去掉,才能从缓存中获取到FactoryBean实例
+		 * 2、还是别名的问题，转换需要
+		 */
 		final String beanName = transformedBeanName(name);
 		Object bean;
 
@@ -252,6 +259,9 @@ public abstract class AbstractBeanFactory extends FactoryBeanRegistrySupport imp
 		//然后通过getObject获取对象,然后做缓存
 		// Eagerly check singleton cache for manually registered singletons.
 		//第一次调用getSingleton
+
+		//为什么调用get呢
+		//
 		Object sharedInstance = getSingleton(beanName);
 		if (sharedInstance != null && args == null) {
 			if (logger.isTraceEnabled()) {
@@ -269,6 +279,7 @@ public abstract class AbstractBeanFactory extends FactoryBeanRegistrySupport imp
 		else {
 			// Fail if we're already creating this bean instance:
 			// We're assumably within a circular reference.
+			//原型的不应该在初始化的时候创建
 			if (isPrototypeCurrentlyInCreation(beanName)) {
 				throw new BeanCurrentlyInCreationException(beanName);
 			}
@@ -296,6 +307,7 @@ public abstract class AbstractBeanFactory extends FactoryBeanRegistrySupport imp
 			}
 
 			if (!typeCheckOnly) {
+				//防止重复创建
 				markBeanAsCreated(beanName);
 			}
 

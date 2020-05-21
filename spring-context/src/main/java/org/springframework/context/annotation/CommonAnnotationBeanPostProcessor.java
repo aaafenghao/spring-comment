@@ -134,6 +134,12 @@ import org.springframework.util.StringValueResolver;
  * the latter configuration will override the former for properties wired through
  * both approaches.
  *
+ * 主要处理@Resource、@PostConstruct和@PreDestroy注解的实现
+ * Resource的注解是自己完成的
+ * 其他的两个是由父类完成的
+ * 父类InitDestroyAnnotationBeanPostProcessor的postProcessMergedBeanDefinition会找出被
+ * @PostConstruct和@PreDestroy注解的方法
+ *
  * @author Juergen Hoeller
  * @since 2.5
  * @see #setAlwaysUseJndiLookup

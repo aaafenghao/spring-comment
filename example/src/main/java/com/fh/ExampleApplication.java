@@ -25,6 +25,8 @@ public class ExampleApplication {
 	 * 然后添加到早期池中,接着执行接下来的生命周期,执行完成后添加到单例池中,
 	 * 然后接着执行IndexService的生命周期,注入依赖关系
 	 * 结束！！！
+	 *
+	 * 自动装配的时候,会忽略掉class类型的属性
 	 * @param args
 	 */
 	public static void main(String[] args) {

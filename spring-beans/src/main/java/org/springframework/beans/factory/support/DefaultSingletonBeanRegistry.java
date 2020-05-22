@@ -184,6 +184,7 @@ public class DefaultSingletonBeanRegistry extends SimpleAliasRegistry implements
 			//单例池中获取不到,根据set集合中是否包含判断对象是否正在创建
 			synchronized (this.singletonObjects) {
 				//从early单例池中获取对象
+				//earlySingletonObjects这个Map在循环依赖做没啥作用,主要是为了后面的类型检查加速
 				singletonObject = this.earlySingletonObjects.get(beanName);
 				if (singletonObject == null && allowEarlyReference) {
 					//获取不到,且允许循环引用,从单例工厂池中获取

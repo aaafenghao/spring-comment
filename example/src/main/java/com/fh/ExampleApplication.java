@@ -6,6 +6,7 @@ import com.fh.imports.dao.TestDao;
 import com.fh.mybatis.dao.CardDao;
 import com.fh.service.IndexService;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
+import org.springframework.context.annotation.EnableAspectJAutoProxy;
 
 /**
  * 启动类

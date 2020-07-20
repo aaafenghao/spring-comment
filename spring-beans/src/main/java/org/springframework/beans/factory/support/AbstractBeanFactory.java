@@ -261,7 +261,7 @@ public abstract class AbstractBeanFactory extends FactoryBeanRegistrySupport imp
 		//第一次调用getSingleton
 
 		//为什么调用get呢
-		//
+		//第一次调用返回的必然为null,如果是对象已经创建,但是属性还没有装配,就会放到singletonFactories中
 		Object sharedInstance = getSingleton(beanName);
 		if (sharedInstance != null && args == null) {
 			if (logger.isTraceEnabled()) {
@@ -399,7 +399,7 @@ public abstract class AbstractBeanFactory extends FactoryBeanRegistrySupport imp
 				throw ex;
 			}
 		}
-
+		//检查请求的实例和实际的实例类型是否匹配
 		// Check if required type matches the type of the actual bean instance.
 		if (requiredType != null && !requiredType.isInstance(bean)) {
 			try {

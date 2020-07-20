@@ -37,6 +37,8 @@ import org.springframework.util.ReflectionUtils;
  * SPI as opposed to (or possibly in combination with) the traditional
  * {@code web.xml}-based approach.
  *
+ * 支持基于代码的配置Spring的Servlet容器,而不是传统的基于Web.xml的
+ *
  * <h2>Mechanism of Operation</h2>
  * This class will be loaded and instantiated and have its {@link #onStartup}
  * method invoked by any Servlet 3.0-compliant container during container startup assuming

@@ -115,6 +115,12 @@ class ConstructorResolver {
 	 * <p>This corresponds to constructor injection: In this mode, a Spring
 	 * bean factory is able to host components that expect constructor-based
 	 * dependency resolution.
+	 *
+	 * 自动注入构造函数--按照类型设置构造函数参数行为
+	 * 如果指定了显示的构造函数参数,也会被应用
+	 * 将所有的剩余Bean和Bean工厂中的Bean匹配   --构造函数注入模式
+	 *
+	 * springBean工厂能够解决构造函数的依赖关系
 	 * @param beanName the name of the bean
 	 * @param mbd the merged bean definition for the bean
 	 * @param chosenCtors chosen candidate constructors (or {@code null} if none)
@@ -173,7 +179,7 @@ class ConstructorResolver {
 							"] from ClassLoader [" + beanClass.getClassLoader() + "] failed", ex);
 				}
 			}
-
+			//只有一个构造函数,且没有明确的参数且没有定义构造函数参数
 			if (candidates.length == 1 && explicitArgs == null && !mbd.hasConstructorArgumentValues()) {
 				Constructor<?> uniqueCandidate = candidates[0];
 				if (uniqueCandidate.getParameterCount() == 0) {

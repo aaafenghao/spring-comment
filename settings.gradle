@@ -37,4 +37,5 @@ rootProject.children.each {project ->
 }
 include 'example'
 include 'b-log'
+include 'extensions'
 

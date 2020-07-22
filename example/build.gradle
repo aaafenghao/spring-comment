@@ -18,6 +18,7 @@ dependencies {
     compile(project(":spring-beans"))
     compile(project(":spring-aop"))
     compile(project(":spring-aspects"))
+    compile(project(":spring-webmvc"))
     compile group: 'commons-io', name: 'commons-io', version: '2.6'
 
 }

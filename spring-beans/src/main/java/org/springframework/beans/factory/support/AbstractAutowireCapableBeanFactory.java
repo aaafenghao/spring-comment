@@ -512,6 +512,7 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
 			//第一次调用后置处理器
 			// Give BeanPostProcessors a chance to return a proxy instead of the target bean instance.
 			Object bean = resolveBeforeInstantiation(beanName, mbdToUse);
+			//调用对象后置处理器,如果已经在处理器中创建好对象,直接调用后置处理器中的After方法之后返回对象
 			if (bean != null) {
 				return bean;
 			}
